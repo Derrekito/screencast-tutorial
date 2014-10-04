@@ -1,0 +1,234 @@
+#!/bin/bash
+
+######
+# Shorten the displayed prompt text!
+PS1=$
+######
+
+#
+# INIT and VARS
+##########################################
+#if [ -n $1 ]; then
+#  echo "ERROR: include your tty number"
+#  exit 1
+#fi
+# try to clean up any other tmux that may be in a zombie like state
+killall tmux
+clear
+#LTERM=`tty`
+RTERM="TUTORIAL"
+RMSG=""
+LMSG=""
+SENDKEY='tmux send-key -t'
+STMUX='tmux new-session -s TUTORIAL'
+YOUTUBE=1;
+
+# XTERM OPTIONS
+#XRTERM=`xterm -cr green -bg black -fg green -fb 'Droid Sans' \
+#-fa 'Droid Sans Mono' -fs 10e -e 'tmux new-session -s TUTORIAL'`&
+FONT='Droid Sans'
+MONOFONT='Droid Sans Mono'
+TEXT_COLOR='green'
+SELECT_COLOR='green'
+BACK_GROUND='black'
+SESSION_NAME='TUTORIAL'
+FONT_SIZE='10'
+FPS='30'
+
+# FFMPEG OPTIONS
+CODEC='huffyuv'
+RESOLUTION='1920x1080'
+#
+# TITLE
+##########################################
+sleep 1
+echo '##############################################################################'; sleep 0.5
+echo '#                HOW TO: SCREEN CAST WITH AN AUTOMATED SCRIPT                #'; sleep 1
+echo '#                                                                            #'; sleep 1
+echo '# Tutorial objectives:                                                       #'; sleep 2
+echo '#   - Start a new terminal to act as the display using "tmux".               #'; sleep 2
+echo '#   - Write a BASH script that will record the desktop when envoked.         #'; sleep 2
+echo '#   - DEMO the script.                                                       #'; sleep 2
+echo '#                                                                            #'; sleep 1
+echo '# NOTE: "ffmpeg" & "tmux" are dependencies for this tutorial.                #'; sleep 0.5
+echo '##############################################################################'; sleep 3
+
+
+#
+# FUNCTIONS
+##########################################
+delay() {
+  sleep 1;
+}
+
+send() {
+  $SENDKEY $RTERM "$RMSG"$'\n'
+  delay
+}
+
+return() {
+  $SENDKEY $RTERM $'\n'
+}
+
+space(){
+  echo ''
+  echo ''
+  echo ''
+  echo ''
+  echo ''
+}
+
+ramble() {
+  echo $LMSG | randtype
+  delay
+}
+
+blurp(){
+  echo $LMSG
+  delay
+}
+
+term(){
+  xterm -cr SELECT_COLOR -bg BACKGROUND_COLOR -fg TEXT_COLOR -fb $FONT -fa $MONOFONT -fs $FONT_SIZE \
+        -e "tmux new-session -s $SESSION" &
+}
+
+record(){
+  xterm -e ffmpeg -f x11grab -s $RESOLUTION -i :0.0 -r 30 -vcodec $CODEC $SESSION_NAME.avi send
+}
+
+stop_record(){
+  killall ffmpeg
+}
+#
+# SCRIPT
+##########################################
+echo ''
+
+# SETUP
+LMSG='# TO START, RUN THE FOLLOWING INTO THE TERMINAL:'; blurp
+LMSG='$ xterm -e "tmux new-session -s TUTORIAL"'; ramble
+#XRTERM=`xterm -cr green -bg black -fg green -fb 'Droid Sans' -fa 'Droid Sans Mono' -fs 10e -e 'tmux new-session -s TUTORIAL'`&
+xterm -e 'tmux new-session -s TUTORIAL' &
+RMSG='PS1=$'; send
+LMSG='# To test the input/output of the new terminal send a command like'; blurp
+LMSG='# the following:'; ramble
+
+
+LMSG="$ tmux send-key -t "TUTORIAL" ls $'\n'"; ramble
+RMSG='echo"";ls;echo""'; send
+LMSG='# If successful you can start executing the command sequence that you want.' ramble
+clear;
+# END SETUP
+
+# MKDIR and TOUCH SCRIPT
+LMSG='# For example:'; ramble
+
+LMSG="$ mkdir ./tutorial_example $'\n'"; ramble
+RMSG='mkdir ./tutorial_example'; send
+
+LMSG='$ cd tutorial_example';
+RMSG='cd tutorial_example'; send
+clear;
+
+LMSG="$ nano example $'\n'"; ramble
+RMSG='nano example'; send
+clear;
+
+# EDIT SCRIPT
+delay
+delay
+delay
+RMSG='#!/bin/bash'; send
+
+# VIDEO DISCLAIMER
+RMSG='# WARNING: The following code creates a lossless video.'; send
+RMSG='# Depending on your screen resolution and other factors the generated'; send
+RMSG='# file size can be on the order of tens of gigabytes for just a few'; send
+RMSG='# minutes of video. However, the video can be re-encoded later.'; send
+RMSG='# There are also other encoding options available, but that topic'; send
+RMSG='# is out of scope for this tutorial.'; send
+
+# VIDEO CAPTURE CODE
+LMSG='# To capture the screen you will need to run something similiar to:'; ramble
+RMSG='xterm -e ffmpeg -f x11grab -s 1920x1080 -i :0.0 -r 30 -vcodec huffyuv TUTORIAL.avi' send
+
+
+# SAVE SCRIPT
+LMSG='# To save the script and exit the text editor type the following:'; ramble
+
+
+#LMSG='# ctrl+o (to save)'; ramble
+#tmux send-keys -t TUTORIAL $'C-o \n'
+
+#LMSG='# Enter to submit'; ramble
+#tmux send-key -t TUTORIAL $'\n'
+#return
+
+LMSG='# ctrl+x (to exit)'; ramble
+tmux send-keys -t TUTORIAL $'C-x'
+tmux send-keys -t TUTORIAL $'y'
+#tmux send-keys -t TUTORIAL $'\n'
+
+# EXECUTE CODE
+LMSG='# Use the command sequence "chmod +x example" to change'; ramble 
+LMSG='# file permissions to allow the script to execute'; ramble
+RMSG='chmod +x example'; send
+#-------------------------------------- WORKS UP TO HERE -----------------------------------#
+
+LMSG="# All that is left is to execute the script!"
+sleep 1;
+LMSG='# To run the script type "bash example" or "./example" and press "ENTER" '; ramble
+sleep 2;
+
+
+#LMSG='# When you finish recording you can use "killall ffmpeg" to stop the video'; ramble
+#LMSG='# I will do something in the background while capturing the desktop.'; ramble
+
+#RMSG='#!/bin/bash'; send
+#RMSG='xterm -e ffmpeg -f x11grab -s 1920x1080 -i :0.0 -r $FPS -vcodec huffyuv TUTORIAL.avi'; send
+
+#RMSG='echo "This is an example of an example. I hope you found this helpful. Thanks for watching!"'; send
+# example of an example
+
+
+# ENDING CAPTURE
+#sleep 5;
+#LMSG='# Stopping video using "killall ffmpeg"...'; ramble
+#killall ffmpeg
+#LMSG='#and you can do the same for tmux for good measure'; ramble
+#killall tmux
+#LMSG='# After finishing the script there should be an avi in the current folder.'; ramble
+#delay
+#ls
+#delay
+
+#mplayer TUTORIAL.avi &
+#clear
+
+# CLOSING
+LMSG='# That is it! I hope you found this useful. Thank you for watching!'; ramble
+
+
+# xdotool would be useful to communicate special keys to terminals by referencing their tty path
+#REC=`ffmpeg -f x11grab -s 1920x1080 -i :0.0+1920,0 -r 30 -vcodec huffyuv TUTORIAL.avi &`
+
+#***************************************************
+# Example:
+#  echo $string | randtype
+#  xdotool key Down Return
+#  xdotool key Ctrl+M Return
+
+
+#
+# FINISH
+##########################################
+sleep 5
+killall ffmpeg
+killall tmux
+#rm -r tutorial_example
+
+
+#
+# END
+##########################################
