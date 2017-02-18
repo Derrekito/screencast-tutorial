@@ -27,7 +27,7 @@ YOUTUBE=1;
 #XRTERM=`xterm -cr green -bg black -fg green -fb 'Droid Sans' \
 #-fa 'Droid Sans Mono' -fs 10e -e 'tmux new-session -s TUTORIAL'`&
 FONT='Droid Sans'
-MONOFONT='Droid Sans Mono'
+MONOFONT='Hack'
 TEXT_COLOR='green'
 SELECT_COLOR='green'
 BACK_GROUND='black'
